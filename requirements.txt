@@ -1,5 +1,9 @@
 langgraph
+
 langchain-openai
 langchain-ollama
 langsmith
 python-dotenv
+
+langgraph-cli
+langgraph-api

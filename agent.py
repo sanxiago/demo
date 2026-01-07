@@ -13,16 +13,18 @@ class State(TypedDict, total=False):
     user_message: str
     response: str
 
-llm = ChatOpenAI(model="gpt-4o-mini")
+llm = ChatOpenAI(model="gpt-4o-mini",temperature=0.1)
 
 def tutor(state: State) -> State:
     name = state.get("name", "friend")
     interests = ", ".join(state.get("interests", []))
     lexile_level = state.get("lexile_level", "200L")
-    
+    user_message = state.get("user_message", "") 
     
     prompt = f""" Your task is to identify the interests and evaluate the lexile level of {name} 
-    You want to find what his interests are, these are what we previously know about him {interests} 
+    You want to find what his interests are, these are what we previously know about him {interests}
+    Check vocabulary and grammar on user input to infer the lexile level
+
     The content of your response should follow these lexile guidelines. 
     - BR-200L: Very simple words, short sentences (5-8 words), concrete only
     - 200-500L: Simple explanations, basic vocabulary
@@ -39,6 +41,9 @@ The format of your response should be JSON formatted, with two items:
 3. interests: This is an updated list of the user interests, append any new interests idenftified.
 
 Response should be in raw JSON no additional markdown or encoding.
+
+The user gave the following message: {user_message}
+
 """
     
     response = llm.invoke(prompt)
