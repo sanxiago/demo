@@ -43,7 +43,7 @@ def tutor(state: State) -> State:
     Response should be in raw JSON no additional markdown or encoding.
     """
 
-    messages = [SystemMessage(content=prompt)] + state.get("messages", [])
+    messages = [SystemMessage(content=prompt)] + state.get("messages", [])[-10:]
     response = llm.invoke(messages)
 
     try:
