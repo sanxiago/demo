@@ -1,12 +1,22 @@
-from agent import agent
 from pprint import pprint
+from agent import agent, State
+from langchain_core.messages import HumanMessage
 
-state = {}
+name = input("What is your name? \n")
+state: State = {
+        "name": name,
+        "messages": [],
+        "interests": [], 
+        "lexile_level": "500L"
+        }
+
 while True:
-    user_input = input("Type message: ")
-    if user_input.lower() == "quit":
+    user_input = input("Type Message> ")
+    if user_input == "quit":
         break
     
-    state["user_message"] = user_input
+    state["messages"].append(HumanMessage(content=user_input))
     state = agent.invoke(state)
-    pprint(state) 
+    
+    print(f"Tutor: {state['messages'][-1].content}\n")
+    print(state)
