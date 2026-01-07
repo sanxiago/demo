@@ -1,4 +1,5 @@
 import json
+from pprint import pprint
 from dotenv import load_dotenv
 from typing import List
 from typing_extensions import TypedDict, Annotated
@@ -32,7 +33,7 @@ def tutor(state: State) -> State:
     - 800-1100L: More complex vocabulary, longer explanations okay
     - 1100L+: Advanced vocabulary and abstract concepts fine
 
-    Personalize your response content with the user name {name}.
+    Personalize your response content with the user name {name} and relevant to {interests}
 
     The format of your response should be JSON formatted:
     1. content: the response content intended for the user
@@ -70,4 +71,4 @@ if __name__ == "__main__":
         "lexile_level": "600L",
         "messages": [HumanMessage(content="What is 6x7???? six-seveeen")]
     })
-    print(result["messages"][-1].content)
+    pprint(result)
