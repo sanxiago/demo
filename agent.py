@@ -1,8 +1,8 @@
-import json
 from pprint import pprint
 from dotenv import load_dotenv
 from typing import List
 from typing_extensions import TypedDict, Annotated
+from pydantic import BaseModel
 from langgraph.graph import StateGraph, START, END
 from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
@@ -10,8 +10,14 @@ from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langgraph.graph.message import add_messages
 
 load_dotenv()
-#llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
-llm = ChatOllama(model="qwen2.5:7b", temperature=0.1)
+
+class TutorResponse(BaseModel):
+    content: str
+    interests: List[str]
+    lexile_level: str
+
+#llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1).with_structured_output(TutorResponse)
+llm = ChatOllama(model="qwen2.5:7b", temperature=0.1).with_structured_output(TutorResponse)
 
 class State(TypedDict, total=False):
     name: str
@@ -37,28 +43,20 @@ def tutor(state: State) -> State:
 
     Personalize your response content with the user name {name} and relevant to {interests}
 
-    The format of your response should be JSON formatted:
-    1. content: the response content intended for the user
-    2. lexile_level: estimate the user lexile level based on the user responses
-    3. interests: append any interests infered from the user messages.
-
-    Response should be in raw JSON no additional markdown or encoding.
+    Return:
+    - content: your response to the user
+    - lexile_level: estimate based on user responses
+    - interests: append any interests inferred from user messages
     """
-    print(state.get("messages"))
+
     messages = [SystemMessage(content=prompt)] + state.get("messages", [])[-10:]
     response = llm.invoke(messages)
 
-    try:
-        result = json.loads(response.content)
-        return {
-            "messages": [AIMessage(content=result["content"])],
-            "interests": result["interests"],
-            "lexile_level": result["lexile_level"]
-        }
-    except json.JSONDecodeError:
-        return {
-            "messages": [AIMessage(content=response.content)]
-        }
+    return {
+        "messages": [AIMessage(content=response.content)],
+        "interests": response.interests,
+        "lexile_level": response.lexile_level
+    }
 
 graph = StateGraph(State)
 graph.add_node("tutor", tutor)
