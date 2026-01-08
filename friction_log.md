@@ -20,4 +20,5 @@ On the Langsmith [evaluate-graph documentation](https://docs.langchain.com/langs
     Reviewing the docs I found a [working example of sdk dataset creation](https://docs.langchain.com/langsmith/manage-datasets-programmatically#create-a-dataset-from-list-of-values) That works.
     Fix: Update example code snippet to include create_examples separately as sdk docs show above.
 
-- Suggestion, it would be nice a hint box that recommends using structured output, when evaluating outputs, I had some evaluation runs that gave me inconsistent values due to additional markdown in the output. 
+- Suggestion, on the [evaluator section.](https://docs.langchain.com/langsmith/evaluate-graph#create-an-evaluator)  it would be nice a hint box that recommends using structured output. 
+ I had some evaluation runs that gave me inconsistent values due to additional markdown in the output. Similar to the hint of the asynchronous evaluator.
