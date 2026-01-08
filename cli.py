@@ -7,7 +7,7 @@ state: State = {
         "name": name,
         "messages": [],
         "interests": [], 
-        "lexile_level": "500L"
+        "lexile_level": ""
         }
 
 while True:
@@ -19,4 +19,5 @@ while True:
     state = agent.invoke(state)
     
     print(f"Tutor: {state['messages'][-1].content}\n")
-    print(state)
+    #print(f"Interests: {state['interests']}")
+    #print(f"lexile_level: {state['lexile_level']}")

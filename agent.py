@@ -4,12 +4,14 @@ from dotenv import load_dotenv
 from typing import List
 from typing_extensions import TypedDict, Annotated
 from langgraph.graph import StateGraph, START, END
+from langchain_ollama import ChatOllama
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage, AIMessage, SystemMessage
 from langgraph.graph.message import add_messages
 
 load_dotenv()
-llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
+#llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.1)
+llm = ChatOllama(model="qwen2.5:7b", temperature=0.1)
 
 class State(TypedDict, total=False):
     name: str
@@ -27,22 +29,22 @@ def tutor(state: State) -> State:
     Check vocabulary and grammar on user input to infer the lexile level
 
     The content of your response should follow these lexile guidelines. 
-    - BR-200L: Very simple words, short sentences (5-8 words), concrete only
-    - 200-500L: Simple explanations, basic vocabulary
-    - 500-800L: Clear explanations, moderate sentence length
-    - 800-1100L: More complex vocabulary, longer explanations okay
-    - 1100L+: Advanced vocabulary and abstract concepts fine
+    - 0-200: Very simple words, short sentences (5-8 words), concrete only
+    - 200-500: Simple explanations, basic vocabulary
+    - 500-800: Clear explanations, moderate sentence length
+    - 800-1100: More complex vocabulary, longer explanations okay
+    - 1101-: Advanced vocabulary and abstract concepts fine
 
     Personalize your response content with the user name {name} and relevant to {interests}
 
     The format of your response should be JSON formatted:
     1. content: the response content intended for the user
-    2. lexile_level: based on their input and comprehension of previous messages.
-    3. interests: This is an updated list of the user interests, append any new interests identified.
+    2. lexile_level: estimate the user lexile level based on the user responses
+    3. interests: append any interests infered from the user messages.
 
     Response should be in raw JSON no additional markdown or encoding.
     """
-
+    print(state.get("messages"))
     messages = [SystemMessage(content=prompt)] + state.get("messages", [])[-10:]
     response = llm.invoke(messages)
 
